@@ -71,6 +71,11 @@ conda install onnxruntime -c conda-forge
 
 pip install -r requirements.txt
 
+### 5\. Configure OPENAI_API_KEY
+
+export OPENAI_API_KEY = "Your_API_Key"
+
+
 ### 5\. Prepare the Chroma Database
 
 Navigate to the scripts folder and run the create_database.py script to generate the Chroma database from your data:
