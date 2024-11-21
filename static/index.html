@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Northwestern Soccer Assistant</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chatbot-container {
+      width: 90%;
+      max-width: 600px;
+      height: 90vh;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: #573081; /* Northwestern Purple */
+      color: #ffffff;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .header small {
+      display: block;
+      font-size: 14px;
+      font-weight: normal;
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 10px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #00559a; /* Northwestern Blue */
+      color: #ffffff;
+    }
+
+    .message.bot {
+      align-self: flex-start;
+      background: #d4e157; /* Soccer Green */
+      color: #000000;
+    }
+
+    .sources {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #333;
+    }
+
+    .sources button {
+      background: #573081;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin-right: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .sources button:hover {
+      background: #452a63;
+    }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .typing-indicator img {
+      width: 24px;
+      height: 24px;
+      animation: roll 1s infinite linear;
+    }
+
+    @keyframes roll {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .quick-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-top: 1px solid #ddd;
+    }
+
+    .quick-prompt {
+      background: #573081;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .quick-prompt:hover {
+      background: #452a63;
+    }
+
+    .chat-footer {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      background: #f1f3f4;
+    }
+
+    .chat-footer input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .chat-footer button {
+      padding: 10px 20px;
+      background: #573081; /* Northwestern Purple */
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .chat-footer button:hover {
+      background: #452a63;
+    }
+  </style>
+</head>
+<body>
+  <div class="chatbot-container">
+    <!-- Header -->
+    <div class="header">
+      Northwestern Soccer Assistant
+      <small>Your virtual coaching assistant</small>
+    </div>
+
+    <!-- Chat Body -->
+    <div class="chat-body" id="chatBody">
+      <div class="message bot">Welcome! How can I assist you with Soccer?</div>
+    </div>
+
+    <!-- Quick Prompts -->
+    <div class="quick-prompts" id="quickPrompts">
+      <div class="quick-prompt" data-prompt="What adjustments should Northwestern make to counter an opponent's defensive pressure in the second half?">
+        Counter Defensive Pressure
+      </div>
+      <div class="quick-prompt" data-prompt="Analyze Northwestern's recent offensive and defensive performance in detail.">
+        Analyze Performance
+      </div>
+      <div class="quick-prompt" data-prompt="Suggest ways to boost Northwestern team morale after a tough loss.">
+        Boost Team Morale
+      </div>
+      <div class="quick-prompt" data-prompt="Recommend substitution strategies for Northwestern to maintain momentum during a match.">
+        Substitution Strategy
+      </div>
+      <div class="quick-prompt" data-prompt="How can Northwestern improve individual player performance based on game data?">
+        Player Improvement
+      </div>
+      <div class="quick-prompt" data-prompt="Create a scouting report and tactical plan for Northwestern's next opponent.">
+        Opponent Scouting
+      </div>
+      <div class="quick-prompt" data-prompt="Design a strategy to manage Northwestern player workload and prevent injuries.">
+        Manage Player Workload
+      </div>
+      <div class="quick-prompt" data-prompt="Identify key moments where Northwestern can shift game momentum with tactical changes.">
+        Shift Game Momentum
+      </div>
+    </div>
+
+    <!-- Chat Footer -->
+    <div class="chat-footer">
+      <input type="text" id="chatInput" placeholder="Type your message..." />
+      <button id="sendButton">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBody = document.getElementById("chatBody");
+    const chatInput = document.getElementById("chatInput");
+    const sendButton = document.getElementById("sendButton");
+    const quickPrompts = document.getElementById("quickPrompts");
+
+    sendButton.addEventListener("click", sendMessage);
+    chatInput.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") sendMessage();
+    });
+
+    quickPrompts.addEventListener("click", (event) => {
+      if (event.target.classList.contains("quick-prompt")) {
+        const prompt = event.target.getAttribute("data-prompt");
+        chatInput.value = prompt;
+        sendMessage();
+      }
+    });
+
+    async function sendMessage() {
+      const userMessage = chatInput.value.trim();
+      if (!userMessage) return;
+
+      addMessage("user", userMessage);
+      chatInput.value = "";
+
+      // Add typing indicator
+      const typingIndicator = document.createElement("div");
+      typingIndicator.classList.add("message", "bot");
+      typingIndicator.innerHTML = `
+        <div class="typing-indicator">
+          <img src="https://cdn-icons-png.flaticon.com/512/1165/1165249.png" alt="Soccer Ball" />
+          <span>Assistant is thinking...</span>
+        </div>`;
+      chatBody.appendChild(typingIndicator);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: removeMarkdown(userMessage) }),
+        });
+
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+        const data = await response.json();
+        chatBody.removeChild(typingIndicator); // Remove typing indicator
+        addMessage("bot", removeMarkdown(data.response), data.sources || []);
+      } catch (error) {
+        chatBody.removeChild(typingIndicator); // Remove typing indicator
+        addMessage("bot", "I'm having trouble connecting to the server.");
+      }
+    }
+
+    function addMessage(sender, text, sources = []) {
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("message", sender);
+
+      const formattedText = text.replace(/\n/g, "<br>");
+      messageDiv.innerHTML = `<p>${formattedText}</p>`;
+
+      if (sources && Array.isArray(sources) && sources.length > 0) {
+        const uniqueSources = [...new Set(sources)];
+        const sourcesDiv = document.createElement("div");
+        sourcesDiv.classList.add("sources");
+        sourcesDiv.innerHTML = `<p><strong>Sources:</strong></p>`;
+
+        uniqueSources.forEach((source) => {
+          const filePath = source.replace("/static", "");
+          const fileUrl = `file:///Users/pavankumardharmoju/Documents/GitHub/langchain-rag-tutorial/${filePath}`;
+
+          const sourceButton = document.createElement("button");
+          sourceButton.textContent = "Open Source File";
+          sourceButton.addEventListener("click", () => {
+            alert(`Opening file: ${fileUrl}`);
+            window.open(fileUrl, "_blank");
+          });
+
+          sourcesDiv.appendChild(sourceButton);
+        });
+
+        messageDiv.appendChild(sourcesDiv);
+      }
+
+      chatBody.appendChild(messageDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function removeMarkdown(text) {
+      return text.replace(/\*\*/g, "").replace(/#/g, "").trim();
+    }
+  </script>
+</body>
+</html>
