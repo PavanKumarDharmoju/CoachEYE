@@ -76,7 +76,7 @@ pip install -r requirements.txt
 export OPENAI_API_KEY = "Your_API_Key"
 
 
-### 5\. Prepare the Chroma Database
+### 6\. Prepare the Chroma Database
 
 Navigate to the scripts folder and run the create_database.py script to generate the Chroma database from your data:
 
