@@ -2,3 +2,4 @@
 venv
 /__pycacahe__/
 /app/__pycacahe__/
+*.DS_store
