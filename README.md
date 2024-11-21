@@ -82,13 +82,13 @@ python scripts/create_database.py
 🚀 Running the Application
 --------------------------
 
-Start the Backend: Navigate to the app folder and run the Flask application:
+### 1\. Start the Backend: Navigate to the app folder and run the Flask application:
 
 python app/app.py
 
 1.  The application should be running at http://127.0.0.1:5000.
 
-2.  Open the Front-End:\
+### 2\.Open the Front-End:\
     The chatbot and front-end reference file paths using the placeholder file:///Users/pavankumardharmoju/Documents/GitHub/langchain-rag-tutorial/. This path must be updated to match your current working directory.
 
 -   Open the static/index.html file in a browser.
