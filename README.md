@@ -174,4 +174,4 @@ For questions or support, please contact:
 
 -   Team Name: SoccerSynth
 
--   Email: salonipatel2024@u.northwestern.edu
+-   Email: dharmojupavankumar@gmail.com
